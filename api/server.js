@@ -2,18 +2,29 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+const PORT = process.env.PORT || 3001;
+
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/react-todo', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/react-todo', {
 	useNewUrlParser: true, 
 	useUnifiedTopology: true 
 }).then(() => console.log("Connected to MongoDB")).catch(console.error);
 
 // Models
 const Todo = require('./models/Todo');
+
+if (process.env.NODE_ENV === 'production'){
+	app.use(express.static('client/build/'));
+
+	app.get('*', (req,res) => {
+		res.sendFile(path.resolve(__dirname,'client','build','index.html'));
+	});
+
+}
 
 app.get('/todos', async (req, res) => {
 	const todos = await Todo.find();
@@ -57,4 +68,6 @@ app.put('/todo/update/:id', async (req, res) => {
 	res.json(todo);
 });
 
-app.listen(3001);
+app.listen(PORT);
+
+
