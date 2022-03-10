@@ -20,10 +20,10 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING || 'mongodb://127.0.0.1:2
 const Todo = require('./models/Todo');
 
 if (process.env.NODE_ENV === 'production'){
-	app.use(express.static('client/build/'));
+	app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 	app.get('*', (req,res) => {
-		res.sendFile(path.resolve(__dirname,'client','build','index.html'));
+		res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
 	});
 
 }
